@@ -1,10 +1,190 @@
-version: '3'
+# use v2.3 API to allow `mem_limit` option
+version: "2.3"
+
 services:
-  gluu:
-    image: gluufederation/community-edition:latest
+  consul:
+    image: consul
+    hostname: consul-1
     environment:
-      - GLUU_ADMIN_PASS=admin
-      - GLUU_AUTHENTICATION_MODE=oxAuth
+      - CONSUL_BIND_INTERFACE=eth0
+      - CONSUL_CLIENT_INTERFACE=eth0
+    container_name: consul
+    restart: unless-stopped
+    volumes:
+      - ./volumes/consul:/consul/data
+      - ./consul-config.json:/consul/etc/config.json
+    labels:
+      - "SERVICE_IGNORE=yes"
+
+  vault:
+    container_name: vault
+    image: vault:1.0.3
+    command: vault server -config=/vault/config
+    volumes:
+      - ./volumes/vault/config:/vault/config
+      - ./volumes/vault/data:/vault/data
+      - ./volumes/vault/logs:/vault/logs
+      - ./vault_gluu_policy.hcl:/vault/config/policy.hcl
+    cap_add:
+      - IPC_LOCK
+    environment:
+      - VAULT_REDIRECT_INTERFACE=eth0
+      - VAULT_CLUSTER_INTERFACE=eth0
+      - VAULT_ADDR=http://0.0.0.0:8200
+      - VAULT_LOCAL_CONFIG={"backend":{"consul":{"address":"consul:8500","path":"vault/"}},"listener":{"tcp":{"address":"0.0.0.0:8200","tls_disable":1}}}
+    restart: unless-stopped
+    depends_on:
+      - consul
+    labels:
+      - "SERVICE_IGNORE=yes"
+
+  registrator:
+    image: gluufederation/registrator:dev
+    command: registrator -internal -cleanup -resync 30 -retry-attempts 5 -retry-interval 10 consul://consul:8500
+    container_name: registrator
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock
+    restart: unless-stopped
+    depends_on:
+      - consul
+
+  nginx:
+    image: gluufederation/nginx:3.1.6_02
+    environment:
+      - GLUU_CONFIG_CONSUL_HOST=consul
+      - GLUU_SECRET_VAULT_HOST=vault
     ports:
-      - "8099:8080"
-    restart: always
+      - "80:80"
+      - "443:443"
+    container_name: nginx
+    restart: unless-stopped
+    labels:
+      - "SERVICE_IGNORE=yes"
+    volumes:
+      - ./vault_role_id.txt:/etc/certs/vault_role_id
+      - ./vault_secret_id.txt:/etc/certs/vault_secret_id
+
+  ldap:
+    image: gluufederation/opendj:3.1.6_02
+    environment:
+      - GLUU_CONFIG_CONSUL_HOST=consul
+      - GLUU_SECRET_VAULT_HOST=vault
+      - GLUU_LDAP_INIT=true
+      - GLUU_LDAP_INIT_HOST=ldap
+      - GLUU_LDAP_INIT_PORT=1636
+      - GLUU_OXTRUST_CONFIG_GENERATION=true
+      - GLUU_CACHE_TYPE=NATIVE_PERSISTENCE
+      - GLUU_CERT_ALT_NAME=ldap
+    container_name: ldap
+    volumes:
+      - ./volumes/opendj/config:/opt/opendj/config
+      - ./volumes/opendj/ldif:/opt/opendj/ldif
+      - ./volumes/opendj/logs:/opt/opendj/logs
+      - ./volumes/opendj/db:/opt/opendj/db
+      - ./volumes/opendj/flag:/flag
+      - ./volumes/opendj/backup:/opt/opendj/bak
+      - ./vault_role_id.txt:/etc/certs/vault_role_id
+      - ./vault_secret_id.txt:/etc/certs/vault_secret_id
+    restart: unless-stopped
+    labels:
+      - "SERVICE_IGNORE=yes"
+
+  oxauth:
+    image: gluufederation/oxauth:3.1.6_03
+    environment:
+      - GLUU_CONFIG_CONSUL_HOST=consul
+      - GLUU_SECRET_VAULT_HOST=vault
+      - GLUU_LDAP_URL=ldap:1636
+    extra_hosts:
+      - "${DOMAIN}:${HOST_IP}"
+    container_name: oxauth
+    volumes:
+      - ./volumes/oxauth/custom/pages:/opt/gluu/jetty/oxauth/custom/pages
+      - ./volumes/oxauth/custom/static:/opt/gluu/jetty/oxauth/custom/static
+      - ./volumes/oxauth/custom/libs:/opt/gluu/jetty/oxauth/custom/libs
+      - ./volumes/oxauth/custom/i18n:/opt/gluu/jetty/oxauth/custom/i18n
+      - ./volumes/oxauth/logs:/opt/gluu/jetty/oxauth/logs
+      - ./vault_role_id.txt:/etc/certs/vault_role_id
+      - ./vault_secret_id.txt:/etc/certs/vault_secret_id
+    mem_limit: 1536M
+    restart: unless-stopped
+    labels:
+      - "SERVICE_NAME=oxauth"
+      - "SERVICE_8080_CHECK_HTTP=/oxauth/.well-known/openid-configuration"
+      - "SERVICE_8080_CHECK_INTERVAL=15s"
+      - "SERVICE_8080_CHECK_TIMEOUT=5s"
+    env_file:
+      - .env
+
+  oxtrust:
+    image: gluufederation/oxtrust:3.1.6_05
+    environment:
+      - GLUU_CONFIG_CONSUL_HOST=consul
+      - GLUU_SECRET_VAULT_HOST=vault
+      - GLUU_LDAP_URL=ldap:1636
+      - GLUU_OXAUTH_BACKEND=oxauth:8080
+    extra_hosts:
+      - "${DOMAIN}:${HOST_IP}"
+    container_name: oxtrust
+    volumes:
+      - ./volumes/oxtrust/custom/pages:/opt/gluu/jetty/identity/custom/pages
+      - ./volumes/oxtrust/custom/static:/opt/gluu/jetty/identity/custom/static
+      - ./volumes/oxtrust/custom/libs:/opt/gluu/jetty/identity/custom/libs
+      - ./volumes/oxtrust/custom/i18n:/opt/gluu/jetty/identity/custom/i18n
+      - ./volumes/oxtrust/logs:/opt/gluu/jetty/identity/logs
+      - ./volumes/shared-shibboleth-idp:/opt/shared-shibboleth-idp
+      - ./vault_role_id.txt:/etc/certs/vault_role_id
+      - ./vault_secret_id.txt:/etc/certs/vault_secret_id
+    mem_limit: 1536M
+    restart: unless-stopped
+    labels:
+      - "SERVICE_NAME=oxtrust"
+      - "SERVICE_8080_CHECK_HTTP=/identity/restv1/scim-configuration"
+      - "SERVICE_8080_CHECK_INTERVAL=15s"
+      - "SERVICE_8080_CHECK_TIMEOUT=5s"
+      - "APP_NAME=oxtrust"
+    env_file:
+      - .env
+
+  oxshibboleth:
+    image: gluufederation/oxshibboleth:3.1.6_03
+    environment:
+      - GLUU_CONFIG_CONSUL_HOST=consul
+      - GLUU_SECRET_VAULT_HOST=vault
+      - GLUU_LDAP_URL=ldap:1636
+    extra_hosts:
+      - "${DOMAIN}:${HOST_IP}"
+    container_name: oxshibboleth
+    volumes:
+      - ./volumes/shared-shibboleth-idp:/opt/shared-shibboleth-idp
+      - ./vault_role_id.txt:/etc/certs/vault_role_id
+      - ./vault_secret_id.txt:/etc/certs/vault_secret_id
+    mem_limit: 1024M
+    restart: unless-stopped
+    labels:
+      - "SERVICE_NAME=oxshibboleth"
+      - "SERVICE_8086_CHECK_HTTP=/idp"
+      - "SERVICE_8086_CHECK_INTERVAL=15s"
+      - "SERVICE_8086_CHECK_TIMEOUT=5s"
+    env_file:
+      - .env
+
+  oxpassport:
+    image: gluufederation/oxpassport:3.1.6_03
+    environment:
+      - GLUU_CONFIG_CONSUL_HOST=consul
+      - GLUU_SECRET_VAULT_HOST=vault
+    extra_hosts:
+      - "${DOMAIN}:${HOST_IP}"
+    volumes:
+      - ./vault_role_id.txt:/etc/certs/vault_role_id
+      - ./vault_secret_id.txt:/etc/certs/vault_secret_id
+    container_name: oxpassport
+    restart: unless-stopped
+    labels:
+      - "SERVICE_NAME=oxpassport"
+      - "SERVICE_8090_CHECK_HTTP=/passport"
+      - "SERVICE_8090_CHECK_INTERVAL=15s"
+      - "SERVICE_8090_CHECK_TIMEOUT=5s"
+    env_file:
+      - .env
