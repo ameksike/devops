@@ -19,7 +19,7 @@ Keycloak implements modern protocols like OpenID Connect (OIDC) and SAML 2.0 for
 ### API Access Management
 Keycloak allows for securing application APIs by using tokens (JWT tokens or SAML assertions). It makes it easy to define which resources are secured and which roles or clients have access to them.
 
-![dashboard](./rsc/dashboard.jpg)
+[![dashboard](./rsc/dashboard.jpg)](http://localhost:8090/admin/master/console/)
 
 ## Configuration
 1. Logging Configuration for Keycloak in a Docker or Kubernetes Environment:

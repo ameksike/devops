@@ -5,7 +5,7 @@ FusionAuth: Lightweight, open-source IAM with Docker support, easy to set up.
 - [Fast Path Install For the 5-Minute Guide](https://fusionauth.io/docs/quickstarts/5-minute-fastpath)
 - [Using FusionAuth on Docker](https://fusionauth.io/docs/get-started/download-and-install/docker)
 
-![dashboard](./rsc/dashboard.jpg)
+[![dashboard](./rsc/dashboard.jpg)](http://localhost:9011/admin/)
 
 ## Setup
 - [Setup Wizard](http://localhost:9011/admin/setup-wizard)
