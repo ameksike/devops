@@ -1,0 +1,16 @@
+version: "3.8"
+services:
+  mariadb:
+    image: mariadb:10.4.24
+    ports:
+      - "3366:3306"
+    volumes:
+      - ./tmp/mariadb:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=pass
+      - MARIADB_PASSWORD=pass
+      - MARIADB_USER=user
+      - MARIADB_DATABASE=fastify
+    command: mysqld --sql_mode=""
+    healthcheck: 
+      test: ["CMD", "mysqladmin", "ping", "--silent"]
