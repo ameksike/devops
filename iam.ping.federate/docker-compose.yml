@@ -1,0 +1,29 @@
+version: "3"
+services:
+  pingfederate:
+    image: pingidentity/pingfederate:latest
+    container_name: pingfederate
+    environment:
+      # Admin credentials for PingFederate
+      PF_ADMIN_USER: "admin"  # Admin username
+      PF_ADMIN_PASSWORD: "SecurePassword123"  # Admin password
+      PF_DEPLOYMENT_STATE: "RUNNING"  # Ensures the PingFederate starts up in a running state
+      PING_IDENTITY_ACCEPT_EULA: "YES"  # Must accept the end-user license agreement
+      # License (you may need to specify this if required)
+      LICENSE_VERSION: "2023.1" # License version of PingFederate (adjust based on actual license)
+      # Container-specific settings
+      PF_ENGINE_HOSTNAME: "pingfederate-engine"
+      PF_ADMIN_PORT: "9999"  # Port for PingFederate Admin Console
+      PF_ENGINE_PORT: "9031"  # Port for PingFederate Engine
+    ports:
+      - "9999:9999"  # Expose admin console to host
+      - "9031:9031"  # Expose engine port to host
+    volumes:
+      - ./tmp/pingfederate/data:/opt/in/pingfederate/data  # Persisting data outside the container
+      - ./tmp/pingfederate/logs:/opt/in/pingfederate/logs  # Storing logs externally
+    # networks:
+    #  - ping-net
+
+# networks:
+#  ping-net:
+#    driver: bridge
