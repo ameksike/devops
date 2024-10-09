@@ -1,4 +1,5 @@
 # DevOps 
+Repository for configuration management of different services especially for Docker.
 
 - Database
     - MongoDB
