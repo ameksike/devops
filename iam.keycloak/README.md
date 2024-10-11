@@ -59,3 +59,4 @@ For a self-hosted environment, [Keycloak](./README.md), [Gluu](../gluu.federatio
 - [Keycloak Node.js adapter](https://www.keycloak.org/securing-apps/nodejs-adapter)
 - [Docker Compose Deployments for Keycloak and PostgreSQL](https://medium.com/@disa2aka/docker-deployments-for-keycloak-and-postgresql-e75707b155e5)
 - [Configure Multi-factor Authentication (MFA) for a Keycloak User](https://help.zerto.com/bundle/Linux.ZVM.HTML/page/Keycloak_defining_MFA.htm)
+- [Configure User Federation: Keycloak with Microsoft Active Directory](https://help.zerto.com/bundle/Linux.ZVM.HTML/page/User_Federation.htm)
