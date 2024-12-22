@@ -34,3 +34,13 @@ To initialize the database with a test table and some sample data, create an SQL
         - database: test_db
         - Username: `postgres`
         - Password: `postgres`
+
+### Get Container IP
+- docker container ls 
+- copy <CONTAINER ID>
+- docker inspect <CONTAINER ID>
+- docker inspect 7c3334661045
+- Get from JSON the: "IPAddress": "172.19.0.2",
+
+## References 
+- [How to create a docker-compose setup with PostgreSQL and pgAdmin4](https://www.youtube.com/watch?v=qECVC6t_2mU)
