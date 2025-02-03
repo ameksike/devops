@@ -28,11 +28,24 @@ services:
       DB_POSTGRESDB_USER: n8n_user
       DB_POSTGRESDB_PASSWORD: n8n_password
       DB_POSTGRESDB_SCHEMA: public
+      N8N_METRICS: true
     volumes:
       - n8n_data:/home/node/.n8n
     depends_on:
       - postgres
 
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: prometheus
+    restart: always
+    volumes:
+      - prometheus_data:/etc/prometheus
+    ports:
+      - "9090:9090"
+    command:
+      - "--config.file=/etc/prometheus/prometheus.yml"
+
 volumes:
   n8n_data:
   postgres_data:
+  prometheus_data:
