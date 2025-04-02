@@ -111,7 +111,7 @@ module.exports = SecureData;
 
   
 **References**  
-- [MongoDB Encryption During Processing](./dev.encryption.csfle.md)
+- [MongoDB Encryption During Processing](./encryption.csfle.md)
 - [MongoDB Node Driver](https://mongodb.com/docs/drivers/node/current/)  
 - [Ruby MongoDB Driver](https://mongodb.com/docs/ruby-driver/current/)  
 - [Differences Between require() and load()](https://mongodb.com/docs/mongodb-shell/write-scripts/require-load-differences/)  
