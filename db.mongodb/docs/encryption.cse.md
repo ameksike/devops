@@ -1,4 +1,67 @@
-Addressing how encryption during processing works both in Mongoose and native MongoDB, highlighting MongoDB's unique features.
+## General Client-Side Encryption (CSE)
+
+General Client-Side Encryption refers to encrypting data within your application before it's stored in any persistence layer, including MongoDB. Unlike CSFLE, which specifically targets field-level encryption in MongoDB documents, General CSE can utilize any encryption library or technique suited to your application requirements.
+
+Below is an example of implementing General Client-Side Encryption using Node.js. I’ll demonstrate using the `crypto` module included in Node.js for simplicity.
+
+#### Example: General Client-Side Encryption with Node.js
+
+1. **Install MongoDB Driver**
+
+   Make sure to install the MongoDB driver if it's not already present:
+
+   ```bash
+   npm install mongodb
+   ```
+
+2. **Sample Code Using Node.js Built-In `crypto` Library**
+
+   This example will encrypt a message before storing it in MongoDB and decrypt it after retrieving it from the database.
+
+   ```javascript
+   const { MongoClient } = require('mongodb');
+   const crypto = require('crypto');
+
+   // Encryption utility functions
+   function encrypt(text, secret) {
+     const cipher = crypto.createCipheriv('aes-256-cbc', secret, Buffer.alloc(16, 0));
+     let encrypted = cipher.update(text, 'utf8', 'hex');
+     encrypted += cipher.final('hex');
+     return encrypted;
+   }
+
+   function decrypt(encryptedText, secret) {
+     const decipher = crypto.createDecipheriv('aes-256-cbc', secret, Buffer.alloc(16, 0));
+     let decrypted = decipher.update(encryptedText, 'hex', 'utf8');
+     decrypted += decipher.final('utf8');
+     return decrypted;
+   }
+
+   const secretKey = crypto.randomBytes(32); // 256-bit key
+
+   async function runGeneralCSE() {
+     const client = new MongoClient('mongodb://localhost:27017', { useUnifiedTopology: true });
+     try {
+       await client.connect();
+       const db = client.db('mydatabase');
+
+       // Encrypt and store data
+       const message = "Sensitive Information";
+       const encryptedMessage = encrypt(message, secretKey);
+       await db.collection('clientEncryptedData').insertOne({ encryptedField: encryptedMessage });
+
+       // Retrieve and decrypt data
+       const doc = await db.collection('clientEncryptedData').findOne();
+       const decryptedMessage = decrypt(doc.encryptedField, secretKey);
+       console.log('Decrypted Message:', decryptedMessage);
+       
+     } finally {
+       await client.close();
+     }
+   }
+
+   runGeneralCSE().catch(console.error);
+   ```
 
 ### ODMs for MongoDB 
 
@@ -109,7 +172,26 @@ const SecureData = mongoose.model('SecureData', secureDataSchema);
 module.exports = SecureData;
 ```
 
+### Comparative View: General CSE vs. CSFLE
+
+| Feature                | General Client-Side Encryption (CSE)    | Client-Side Field Level Encryption (CSFLE) |
+|------------------------|-----------------------------------------|--------------------------------------------|
+| **Implementation**     | Uses any encryption library/method      | MongoDB-specific API through drivers       |
+| **Target**             | Entire data (documents, fields, files)  | Specific fields in MongoDB documents       |
+| **Encryption Level**   | Application-controlled, flexible        | Field-level control using MongoDB          |
+| **Query Capabilities** | Cannot natively query encrypted data    | Supports deterministic queryable encryption|
+| **Setup Complexity**   | Variable, based on approach chosen      | Requires setup with MongoDB ecosystem      |
+| **Use Cases**          | General encryption requirements         | Specifically tailored for MongoDB users    |
+
+### Use Cases
+
+- **General CSE**: When you require encryption independent of MongoDB's built-in capabilities and when you need to manage encryption for multiple systems or data stores.
+- **CSFLE**: Specifically for applications needing to encrypt sensitive fields within MongoDB and potentially query them securely.
+
+Both methods offer robust security practices but differ in their integration and level of specificity to MongoDB's environment, providing flexibility depending on your data protection requirements. Use case considerations, such as regulatory compliance and the need for querying encrypted data, will guide the choice.  
   
+
+
 **References**  
 - [MongoDB Encryption During Processing](./encryption.csfle.md)
 - [MongoDB Node Driver](https://mongodb.com/docs/drivers/node/current/)  
@@ -120,3 +202,5 @@ module.exports = SecureData;
 - [PHP Libraries, Frameworks, and Tools](https://mongodb.com/docs/drivers/php-libraries/)  
 - [Migrating from PostgreSQL to MongoDB](https://www.mongodb.com/resources/compare/mongodb-postgresql/dsl-migrating-postgres-to-mongodb)  
 - [Use Snippets in the Console](https://mongodb.com/docs/mongodb-shell/snippets/working-with-snippets/)
+- [Client-Side Encryption](https://mongodb.com/docs/ruby-driver/current/reference/in-use-encryption/client-side-encryption/)  
+- [Methods](https://mongodb.com/docs/mongodb-shell/reference/methods/)
