@@ -46,7 +46,7 @@ The MongoDB database is a core element of MongoDB Atlas, which is a multi-cloud 
 - [Transactions](./transactions.md) 
 - [Indexes](./indexes.md) 
 - [Schema](./schema.md)
-- Encyption
+- [Encyption](./encryption.md)
     - [ODM Encyption](./encyption.odm.md.md)
     - [CSFLE Encyption](./encryption.csfle.md)
     - [Queryable Encyption](./encryption.queryable.md)
