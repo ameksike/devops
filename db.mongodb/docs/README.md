@@ -49,7 +49,7 @@ The MongoDB database is a core element of MongoDB Atlas, which is a multi-cloud 
 - [Indexes](./indexes.md) 
 - [Schema](./schema.md)
 - [Encyption](./encryption.md)
-    - [ODM Encyption](./encyption.odm.md.md)
+    - [CSE Encyption](./encryption.cse.md)
     - [CSFLE Encyption](./encryption.csfle.md)
     - [Queryable Encyption](./encryption.queryable.md)
 - CIDR notation: CIDR notation represents an IP address and a suffix that indicates network identifier bits in a specified format. For example, you could express 192.168. 1.0 with a 22-bit network identifier as 192.168. 1.0/22.
