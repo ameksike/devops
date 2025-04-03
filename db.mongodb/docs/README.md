@@ -41,6 +41,7 @@ The MongoDB database is a core element of MongoDB Atlas, which is a multi-cloud 
     - Connect using MongoDB Compass: `mongodb+srv://MDBUser:<password>@mdb-training-cluster.swnn5.mongodb.net/test`
 
 ### Topics
+- [Database Comparison](./comparison.md)
 - [CRUD & data manipulation](./crud.md) 
 - [Aggregations](./agregation.md) 
 - [Transactions](./transactions.md) 
