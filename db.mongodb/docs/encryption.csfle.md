@@ -4,6 +4,10 @@ MongoDB offers advanced encryption capabilities that set it apart from many comp
 
 Client-Side Field Level Encryption (CSFLE) in MongoDB provides enhanced security by allowing specific fields in documents to be encrypted before data is inserted into the database. This is particularly useful for protecting sensitive information such as credit card numbers, personal health records, or financial information. With CSFLE, data remains encrypted during transmission and storage, and only authorized applications with the correct encryption keys can decrypt it.
 
+MongoDB’s Client-Side Field Level Encryption (CSFLE) feature provides in-use and at-rest encryption capabilities. CSFLE enables you to encrypt data in your application before you send it over the network to MongoDB. The protected fields are encrypted from the time they leave the application boundary until they are received back to the application. Automatic encryption is a mechanism available in MongoDB Enterprise for setting up Client-Side Field Level Encryption (CSFLE).
+- **Automatic encryption** enables developers to perform encrypted read and write operations without having to write code to specify how to encrypt fields, this feature is only available on MongoDB Enterprise instances.
+- **Explicit encryption** manual process. 
+
 Using this feature with the native MongoDB driver involves setting up encryption keys and using the MongoDB shell or your client code to define encrypted fields. Here's a general outline of how it works:
 
 1. **Set up Key Management:** Use the key management system (KMS) integration to generate and manage encryption keys, supporting systems like AWS KMS, Azure Key Vault, etc.
