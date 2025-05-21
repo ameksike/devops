@@ -88,10 +88,10 @@ Below is a graphical representation of MongoDB's sharded architecture:
                                       +-------------------+
                                                |
                                                |
-                                        +----------------+
-                                        | Query Router   | <-- Routes client requests to relevant shards
+                                        +-----------------+
+                                        | Query Router    | <-- Routes client requests to relevant shards
                                         | (MongoDB mongos)|
-                                        +----------------+
+                                        +-----------------+
                                                |
             ---------------------------------------------------------------------------------
             |                                   |                                           |
@@ -144,30 +144,32 @@ A **replica set** is a group of MongoDB servers that maintain the same dataset, 
 
 ```plaintext
                                    +------------------------------------+
-      Replica Set                  |          MongoDB Replica Set       |
+                                   |          MongoDB Replica Set       |
                                    +------------------------------------+
                                                 |
                       +-------------------------+-------------------------+
-                      |                                                   |
-               +-------------------+                              +-------------------+
-               |   Primary Node    |                              |  Arbiter Node     | (Optional)
-               | Handles Writes    |                              | Voting Only, No   |
-               | & Serves Clients  |                              | Data Storage      |
-               +-------------------+                              +-------------------+
-                        |
-                        | Replicates Dataset Using Oplogs
-                        |
+                      |                         |                         |
+               +-------------------+            |                 +-------------------+
+               |   Primary Node    |            |                 |  Arbiter Node     | (Optional)
+               | Handles Writes    |            |                 | Voting Only, No   |
+               | & Serves Clients  |            |                 | Data Storage      |
+               +-------------------+            |                 +-------------------+
+                            |                   |
+Replicates Dataset          |                   |
+Using Oplogs                |                   |
+                        +----------------------------------------+
+                        |                                        |
          +-------------------------+                  +-------------------------+
          | Secondary Node 1 (Read) |                  | Secondary Node 2 (Read) |
          | Stores Replicated Data  |                  | Stores Replicated Data  |
          | & Can Handle Reads      |                  | & Can Handle Reads      |
          +-------------------------+                  +-------------------------+
-                        |
-                        |
-         +-----------------------+     +-----------------------+
-         |      Oplog Buffer     |     |      Oplog Buffer     |
-         |   (Log of Changes)    |     |   (Log of Changes)    |
-         +-----------------------+     +-----------------------+
+                        |                                        |
+                        |                                        |
+         +-----------------------+                    +-----------------------+
+         |      Oplog Buffer     |                    |      Oplog Buffer     |
+         |   (Log of Changes)    |                    |   (Log of Changes)    |
+         +-----------------------+                    +-----------------------+
 ```
 
 ---
