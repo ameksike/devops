@@ -99,7 +99,9 @@ Data that is accessed together should be stored together. How you model your dat
     - [Transactions](https://www.mongodb.com/docs/manual/core/transactions/)
     - [Apply Design Patterns](https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/apply-patterns/)
     - [Building with Patterns: A Summary](https://www.mongodb.com/blog/post/building-with-patterns-a-summary)
+    - [Time Series Data](https://www.mongodb.com/docs/manual/core/timeseries/timeseries-bucketing/)
 - DevOps
     - [Ops Manager Architecture](https://www.mongodb.com/docs/ops-manager/current/core/system-overview/)
     - [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/)
     - [Back Up, Restore, and Archive Data](https://www.mongodb.com/docs/atlas/backup-restore-cluster/)
+    - [Scaling / Sharding](https://www.mongodb.com/docs/manual/sharding/)
