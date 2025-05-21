@@ -19,6 +19,9 @@ The MongoDB database is a core element of MongoDB Atlas, which is a multi-cloud 
 - Embedded documents store related data in a single document.
 - Reference relationships store data by linking references in one document to another document
 
+### MongoDB's principle for how design data model:
+Data that is accessed together should be stored together. How you model your data depends entirely on your particular application's data access patterns. You want to structure your data to match the ways that your application queries and updates it.
+
 ### Common schema anti-patterns
 - Massive arrays
 - Massive number of collections 
@@ -69,3 +72,33 @@ The MongoDB database is a core element of MongoDB Atlas, which is a multi-cloud 
     - [Atlas Administration API Authentication](https://www.mongodb.com/docs/atlas/api/api-authentication/)
     - [The Federal Information Processing Standard (FIPS)](https://www.mongodb.com/docs/manual/tutorial/configure-fips/#std-label-fips-overview)
     - [Implement Field Level Redaction](https://www.mongodb.com/docs/manual/tutorial/implement-field-level-redaction/)
+
+## Links
+- [Scale your startup from ideation to growth](https://www.mongodb.com/solutions/startups)
+- Demos
+    - [Spring IO Demos](https://sites.google.com/mongodb.com/springio-mongodb/home)
+    - [SAT Demo: Azure Spring Service](https://github.com/mongodb-industry-solutions/sat-azure-spring-demo)
+    - [Spring Data Unlocked - Series](https://github.com/mongodb-developer/spring-data-unlocked)
+    - [Celebrity Lookalike!](https://mongodb-celeb-search.com/)
+    - [Industry Solutions Demos](https://demo-portal.industrysolutions.prod.corp.mongodb.com/)
+- AI
+    - [Announcing the MongoDB MCP Server](https://www.mongodb.com/blog/post/announcing-mongodb-mcp-server)
+    - [Atlas Vector Search Overview](https://www.mongodb.com/docs/atlas/atlas-vector-search/vector-search-overview/)
+    - [Binary Quantization & Rescoring: 96% Less Memory, Faster Search](https://www.mongodb.com/blog/post/binary-quantization-rescoring-96-less-memory-faster-search)
+- Security
+    - [Client-Side Field Level Encryption](https://www.mongodb.com/docs/manual/core/csfle/)
+        - [Use Automatic Client-Side Field Level Encryption with AWS](https://www.mongodb.com/docs/manual/core/csfle/tutorials/aws/aws-automatic/)
+    - [Queryable Encryption Quick Start](https://www.mongodb.com/docs/manual/core/queryable-encryption/quick-start/)
+    - [Encryption at Rest](https://www.mongodb.com/docs/manual/core/security-encryption-at-rest/)
+    - [Authentication on Self-Managed Deployments](https://www.mongodb.com/docs/manual/core/authentication/)
+- Monitoring
+    - [Change Streams](https://www.mongodb.com/docs/manual/changeStreams/)
+- Operations
+    - [Aggregations](https://www.mongodb.com/docs/manual/aggregation/)
+    - [Transactions](https://www.mongodb.com/docs/manual/core/transactions/)
+    - [Apply Design Patterns](https://www.mongodb.com/docs/manual/data-modeling/schema-design-process/apply-patterns/)
+    - [Building with Patterns: A Summary](https://www.mongodb.com/blog/post/building-with-patterns-a-summary)
+- DevOps
+    - [Ops Manager Architecture](https://www.mongodb.com/docs/ops-manager/current/core/system-overview/)
+    - [Get Started with the Atlas Administration API](https://www.mongodb.com/docs/atlas/configure-api-access/)
+    - [Back Up, Restore, and Archive Data](https://www.mongodb.com/docs/atlas/backup-restore-cluster/)
