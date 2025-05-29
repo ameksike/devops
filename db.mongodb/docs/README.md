@@ -57,6 +57,7 @@ Data that is accessed together should be stored together. How you model your dat
     - [Queryable Encyption](./encryption.queryable.md)
 - [Triggers](./triggers.md)
 - [Scaling](./scaling.md)
+- [AI & Vector Search](./ai.md)
 - CIDR notation: CIDR notation represents an IP address and a suffix that indicates network identifier bits in a specified format. For example, you could express 192.168. 1.0 with a 22-bit network identifier as 192.168. 1.0/22.
 
 ## References 
