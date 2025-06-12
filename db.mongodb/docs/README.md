@@ -51,6 +51,7 @@ Data that is accessed together should be stored together. How you model your dat
 - [Transactions](./transactions.md) 
 - [Indexes](./indexes.md) 
 - [Schema](./schema.md)
+- [Authentication & Authorization](./auth.md)
 - [Encyption](./encryption.md)
     - [CSE Encyption](./encryption.cse.md)
     - [CSFLE Encyption](./encryption.csfle.md)
